@@ -22,13 +22,14 @@ const (
 	UNKNOWN
 )
 
-func (c ConsoleLogger) log(status string, s interface{}) {
+func (c ConsoleLogger) log(status string, format string, s ...interface{}) {
 	//var t = time.Now().Format("2006.01.02 15:04:05 UTC")
 	var t = time.Now().Format("01-02 15:04:05")
+	msg := fmt.Sprintf(format, s...)
 	pc, file, line, _ := runtime.Caller(2)
 	funcName := runtime.FuncForPC(pc).Name()
 	file = path.Base(file)
-	fmt.Printf("[%s] [%s] [%#v|%#v| Line:%d ] %v\n", t, status, funcName, file, line, s)
+	fmt.Printf("[%s] [%s] [%#v|%#v| Line:%d ] %v\n", t, status, funcName, file, line, msg)
 }
 
 func (c ConsoleLogger) enable(level logLevel) (ok bool) {
@@ -37,43 +38,43 @@ func (c ConsoleLogger) enable(level logLevel) (ok bool) {
 }
 
 //Debug ...
-func (c ConsoleLogger) Debug(s interface{}) {
+func (c ConsoleLogger) Debug(format string, s ...interface{}) {
 	if c.enable(DEBUG) {
-		c.log("DEBUG", s)
+		c.log("DEBUG", format, s)
 	}
 }
 
 //Trace ...
-func (c ConsoleLogger) Trace(s interface{}) {
+func (c ConsoleLogger) Trace(format string,s ...interface{}) {
 	if c.enable(TRACE) {
-		c.log("TRACE", s)
+		c.log("TRACE",format,  s)
 	}
 }
 
 //Info ...
-func (c ConsoleLogger) Info(s interface{}) {
+func (c ConsoleLogger) Info(format string, s ...interface{}) {
 	if c.enable(INFO) {
-		c.log("INFO", s)
+		c.log("INFO",format,  s)
 	}
 }
 
 //Warning ...
-func (c ConsoleLogger) Warning(s interface{}) {
+func (c ConsoleLogger) Warning(format string, s ...interface{}) {
 	if c.enable(WARNING) {
-		c.log("WARNING", s)
+		c.log("WARNING", format, s)
 	}
 }
 
 //Error ...
-func (c ConsoleLogger) Error(s interface{}) {
+func (c ConsoleLogger) Error(format string, s ...interface{}) {
 	if c.enable(ERROR) {
-		c.log("ERROR", s)
+		c.log("ERROR", format, s)
 	}
 }
 
 //Fatal ...
-func (c ConsoleLogger) Fatal(s interface{}) {
+func (c ConsoleLogger) Fatal(format string, s ...interface{}) {
 	if c.enable(FATAL) {
-		c.log("FATAL", s)
+		c.log("FATAL", format, s)
 	}
 }

@@ -4,12 +4,12 @@ import "strings"
 
 //MyLogger ...
 type MyLogger interface {
-	Debug(s interface{})
-	Trace(s interface{})
-	Info(s interface{})
-	Warning(s interface{})
-	Error(s interface{})
-	Fatal(s interface{})
+	Debug(format string, s ...interface{})
+	Trace(format string, s ...interface{})
+	Info(format string, s ...interface{})
+	Warning(format string, s ...interface{})
+	Error(format string, s ...interface{})
+	Fatal(format string, s ...interface{})
 }
 
 type logLevel uint16
