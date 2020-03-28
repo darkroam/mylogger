@@ -22,59 +22,84 @@ const (
 	UNKNOWN
 )
 
-func (c ConsoleLogger) log(status string, format string, s ...interface{}) {
+var mesgCh chan *mesgQ
+
+func init() {
+	fmt.Println("this is mylogger init() ...")
+	mesgCh = make(chan *mesgQ, 500)
+}
+
+type mesgQ struct {
+	mesInfo string
+}
+
+// BackupLogPrint ...
+func (c *ConsoleLogger) BackupLogPrint() {
+	for {
+		mesg, ok := <-mesgCh
+		if !ok {
+			break
+		}
+		fmt.Print(mesg.mesInfo)
+	}
+}
+
+func (c *ConsoleLogger) log(status string, format string, s ...interface{}) {
 	//var t = time.Now().Format("2006.01.02 15:04:05 UTC")
 	var t = time.Now().Format("01-02 15:04:05")
 	msg := fmt.Sprintf(format, s...)
 	pc, file, line, _ := runtime.Caller(2)
 	funcName := runtime.FuncForPC(pc).Name()
 	file = path.Base(file)
-	fmt.Printf("[%s] [%s] [%#v|%#v| Line:%d ] %v\n", t, status, funcName, file, line, msg)
+	var resultMsg = &mesgQ{
+		mesInfo: fmt.Sprintf("[%s] [%s] [%#v|%#v| Line:%d ] %v\n", t, status, funcName, file, line, msg),
+	}
+	mesgCh <- resultMsg
 }
 
-func (c ConsoleLogger) enable(level logLevel) (ok bool) {
+func (c *ConsoleLogger) enable(level logLevel) (ok bool) {
 	//fmt.Printf("%d < %d\n", level, int(c.consoleLoggerLevel))
 	return level >= c.consoleLoggerLevel
 }
 
 //Debug ...
-func (c ConsoleLogger) Debug(format string, s ...interface{}) {
+func (c *ConsoleLogger) Debug(format string, s ...interface{}) {
 	if c.enable(DEBUG) {
-		c.log("DEBUG", format, s)
+		c.log("DEBUG", format, s...)
 	}
 }
 
 //Trace ...
-func (c ConsoleLogger) Trace(format string,s ...interface{}) {
+func (c *ConsoleLogger) Trace(format string, s ...interface{}) {
 	if c.enable(TRACE) {
-		c.log("TRACE",format,  s)
+		c.log("TRACE", format, s...)
 	}
 }
 
 //Info ...
-func (c ConsoleLogger) Info(format string, s ...interface{}) {
+func (c *ConsoleLogger) Info(format string, s ...interface{}) {
 	if c.enable(INFO) {
-		c.log("INFO",format,  s)
+		c.log("INFO", format, s...)
 	}
 }
 
 //Warning ...
-func (c ConsoleLogger) Warning(format string, s ...interface{}) {
+func (c *ConsoleLogger) Warning(format string, s ...interface{}) {
 	if c.enable(WARNING) {
-		c.log("WARNING", format, s)
+		c.log("WARNING", format, s...)
 	}
 }
 
 //Error ...
-func (c ConsoleLogger) Error(format string, s ...interface{}) {
+func (c *ConsoleLogger) Error(format string, s ...interface{}) {
 	if c.enable(ERROR) {
-		c.log("ERROR", format, s)
+		c.log("ERROR", format, s...)
 	}
 }
 
 //Fatal ...
-func (c ConsoleLogger) Fatal(format string, s ...interface{}) {
+func (c *ConsoleLogger) Fatal(format string, s ...interface{}) {
 	if c.enable(FATAL) {
-		c.log("FATAL", format, s)
+		c.log("FATAL", format, s...)
 	}
 }

@@ -40,5 +40,6 @@ func NewConsoleLogger(level string) (c *ConsoleLogger) {
 	default:
 		c.consoleLoggerLevel = UNKNOWN
 	}
+	go c.BackupLogPrint()
 	return
 }
